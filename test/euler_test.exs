@@ -1,15 +1,9 @@
 defmodule EulerTest do
   use ExUnit.Case
 
-  defp solutions, do: [
-    { 1,  233168 },
-    { 2, 4613732 },
-    { 3,    6857 },
-    { 4,  906609 },
-  ]
-
-  test "solutions" do
-    Enum.each solutions, fn { n, solution } -> assert((solution == Euler.solve n), "Problem #{n}") end
-  end
+  test "problem 1", do: assert  233168 == Euler.solve 1
+  test "problem 2", do: assert 4613732 == Euler.solve 2
+  test "problem 3", do: assert    6857 == Euler.solve 3
+  test "problem 4", do: assert  906609 == Euler.solve 4
 
 end
