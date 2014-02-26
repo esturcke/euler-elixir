@@ -9,7 +9,7 @@ defmodule EulerTest do
   ]
 
   test "solutions" do
-    Enum.each solutions, fn { n, solution } -> assert(solution == Euler.solve n) end
+    Enum.each solutions, fn { n, solution } -> assert((solution == Euler.solve n), "Problem #{n}") end
   end
 
 end
