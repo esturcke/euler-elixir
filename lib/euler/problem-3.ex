@@ -1,4 +1,4 @@
-defmodule Problem3 do
+defmodule Euler.Problem3 do
 
   import Euler.Math.Factors
 

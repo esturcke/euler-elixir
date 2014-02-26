@@ -1,4 +1,4 @@
-defmodule Problem4 do
+defmodule Euler.Problem4 do
 
   defp isPalindrome(n), do: to_string n == String.reverse to_string n
 
