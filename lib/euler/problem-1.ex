@@ -11,7 +11,7 @@ defmodule Euler.Problem1 do
   """
 
   def solve do
-    1..1000
+    1..999
     |> Enum.reduce 0, fn
       n, acc when 0 == rem n, 3 -> n + acc
       n, acc when 0 == rem n, 5 -> n + acc
