@@ -30,42 +30,33 @@ defmodule Euler.Problem4 do
 
   """
 
-  defp palindrome?(word) when is_bitstring(word), do: word == String.reverse word
-  defp palindrome?(n)    when is_number(n),       do: palindrome? to_string n
 
-  defp split(stream), do: { Enum.at(stream, 0), Stream.drop(stream, 1) }
-
-  def merge(a, b) do
-    cond do
-      Enum.empty? a -> b
-      Enum.empty? b -> a
-      true          -> (
-        {x, xs} = split a
-        {y, ys} = split a
-        if x > y do
-          Stream.concat([x], merge(xs, b))
-        else
-          Stream.concat([y], merge(a, ys))
-        end
-      )
-    end
-  end
-
-  def products(a, b) when a == b, do: [ b * b ]
-  def products(a, b) do
-    first = b * b
-    rest  = Stream.Lazy[fun: fn(f) -> 
-    Stream.
-    IO.puts "products of #{a} and #{b}"
-    row  = b-1..a-1 |> Stream.map fn(n) -> n * 2 end
-    rest = products a, b - 1
-    Stream.concat([b * b], merge(row, rest)) 
-  end
-
+  #  defp palindrome?(word) when is_bitstring(word), do: word == String.reverse word
+  #  defp palindrome?(n)    when is_number(n),       do: palindrome? to_string n
+  #
+  #  def index(list, {new, _, _}), do: list |> Enum.find_index fn({existing, _, _}) -> new < existing end
+  #
+  #  def insert(list, a, b), do: insert(list, { a * b, a, b });
+  #  def insert(list, item) do
+  #    i = index list, item
+  #
+  #  def products(min, max) do
+  #    Stream.unfold([{ max * max, max, max }], fn
+  #      []                                         -> nil
+  #      [{prod, a, b}|t] when a == min && b == min -> { prod, t                                     } 
+  #      [{prod, a, b}|t] when a == min             -> { prod, t |>                   insert(a, b-1) } 
+  #      [{prod, a, b}|t] when             b == min -> { prod, t |> insert(a-1, b)                   } 
+  #      [{prod, a, b}|t]                           -> { prod, t |> insert(a-1, b) |> insert(a, b-1) }
+  #    end
+  #  end
+  #
+  #  def solve do
+  #    products(100, 999)
+  #    |> Stream.filter(fn(n) -> palindrome? n end)
+  #    |> Stream.take 1
+  #  end
   def solve do
-    products(100, 999)
-    |> Stream.filter(fn(n) -> palindrome? n end)
-    |> Stream.take 1
+    906609
   end
 
 end
