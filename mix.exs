@@ -4,7 +4,7 @@ defmodule Euler.Mixfile do
   def project do
     [ app: :euler,
       version: "0.0.1",
-      elixir: "~> 1.0.5",
+      elixir: "~> 1.1",
       deps: deps ]
   end
 
