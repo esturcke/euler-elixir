@@ -14,11 +14,8 @@ defmodule Euler.Problem1 do
 
   def solve do
     1..999
-    |> Enum.reduce 0, fn
-      n, acc when div?(n, 3) -> n + acc
-      n, acc when div?(n, 5) -> n + acc
-      _, acc                 -> acc
-    end
+    |> Enum.filter(fn n -> div?(n, 3) || div?(n, 5) end)
+    |> Enum.sum
   end
 
 end
