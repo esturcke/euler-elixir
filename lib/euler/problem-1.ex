@@ -10,11 +10,11 @@ defmodule Euler.Problem1 do
   the multiples of 3 or 5 below 1000.
   """
 
-  import Euler.Math, only: [ div?: 2 ]
+  import Euler.Math, only: [div?: 2]
 
   def solve do
     1..999
-    |> Enum.filter(fn n -> div?(n, 3) || div?(n, 5) end)
+    |> Enum.filter(&(div?(&1, 3) or div?(&1, 5)))
     |> Enum.sum
   end
 
