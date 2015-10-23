@@ -10,10 +10,10 @@ defmodule Euler.Problem3 do
   What is the largest prime factor of the number 600851475143?
   """
 
-  import Euler.Math.Factors
+  import Euler.Math.Factors, only: [factors: 1]
 
   def solve do
-    factors(600851475143) |> Enum.at(0)
+    600851475143 |> factors |> List.first
   end
 
 end
