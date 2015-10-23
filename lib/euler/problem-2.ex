@@ -15,12 +15,12 @@ defmodule Euler.Problem2 do
   """
 
   alias Euler.Math.Fibonacci
+  import Integer, only: [is_even: 1]
 
   def solve do
-    Fibonacci.stream
-    |> Enum.take_while(fn(n) -> n < 4000000 end)
-    |> Enum.filter(&(rem(&1, 2) == 0))
-    |> Enum.reduce(&(&1 + &2))
+    Fibonacci.under(4_000_000)
+    |> Enum.filter(&is_even/1)
+    |> Enum.sum
   end
 
 end
