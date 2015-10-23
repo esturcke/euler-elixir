@@ -13,8 +13,7 @@ defmodule Euler.Problem1 do
   import Euler.Math, only: [div?: 2]
 
   def solve do
-    1..999
-    |> Enum.filter(&(div?(&1, 3) or div?(&1, 5)))
+    (for n <- 1..999, div?(n, 3) or div?(n, 5), do: n)
     |> Enum.sum
   end
 
