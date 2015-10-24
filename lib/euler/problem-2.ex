@@ -14,7 +14,7 @@ defmodule Euler.Problem2 do
   four million, find the sum of the even-valued terms.
   """
 
-  alias Euler.Math.Fibonacci
+  alias Math.Fibonacci
   import Integer, only: [is_even: 1]
 
   def solve do

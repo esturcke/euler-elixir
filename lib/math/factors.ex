@@ -1,6 +1,6 @@
-defmodule Euler.Math.Factors do
+defmodule Math.Factors do
 
-  import Euler.Math.Primes
+  import Math.Primes
 
   defp find(n,  l, acc \\ [])
   defp find(_, [], acc), do: acc
@@ -13,8 +13,8 @@ defmodule Euler.Math.Factors do
 
   def factors(n) do
     sqrt = n |> :math.sqrt |> trunc
-    if sqrt <= Euler.Math.Primes.List.max do
-      find(n, Euler.Math.Primes.List.list)
+    if sqrt <= Math.Primes.List.max do
+      find(n, Math.Primes.List.list)
     else
       find(n, primes)
     end

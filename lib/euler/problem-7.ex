@@ -10,7 +10,7 @@ defmodule Euler.Problem7 do
   What is the 10 001st prime number?
   """
 
-  import Euler.Math.Primes
+  import Math.Primes
 
   def solve do
     primes |> Enum.at 10000

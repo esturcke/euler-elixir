@@ -10,7 +10,7 @@ defmodule Euler.Problem1 do
   the multiples of 3 or 5 below 1000.
   """
 
-  import Euler.Math, only: [div?: 2]
+  import Math, only: [div?: 2]
 
   def solve do
     (for n <- 1..999, div?(n, 3) or div?(n, 5), do: n)

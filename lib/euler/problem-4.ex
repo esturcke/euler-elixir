@@ -40,7 +40,7 @@ defmodule Euler.Problem4 do
 
   """
 
-  import Euler.Math, only: [div?: 2, between?: 3]
+  import Math, only: [div?: 2, between?: 3]
 
   defp f(b, c), do: 81819 + 910 * b + 100 * c
 

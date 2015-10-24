@@ -1,6 +1,6 @@
-defmodule Euler.Math.Primes do
+defmodule Math.Primes do
 
-  import Euler.Math, only: [div?: 2]
+  import Math, only: [div?: 2]
 
   defp isPrime(n) do
     sqrt = n |> :math.sqrt |> trunc
@@ -12,7 +12,7 @@ defmodule Euler.Math.Primes do
   end
 
   def primes do
-    import Euler.Math.Primes.List
+    import Math.Primes.List
     odds = Stream.iterate max + 2, &(&1 + 2)
     Stream.concat(list, odds |> Stream.filter &isPrime/1)
   end

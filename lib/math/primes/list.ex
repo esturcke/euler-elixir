@@ -1,4 +1,4 @@
-defmodule Euler.Math.Primes.List do
+defmodule Math.Primes.List do
 
   @moduledoc """
   # List of first 10000 primes (up to 104,729)
