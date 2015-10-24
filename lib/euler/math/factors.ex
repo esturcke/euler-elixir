@@ -12,7 +12,12 @@ defmodule Euler.Math.Factors do
   end
 
   def factors(n) do
-    find(n, primes)
+    sqrt = n |> :math.sqrt |> trunc
+    if sqrt <= Euler.Math.Primes.List.max do
+      find(n, Euler.Math.Primes.List.list)
+    else
+      find(n, primes)
+    end
   end
 
 end

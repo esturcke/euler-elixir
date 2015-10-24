@@ -1,16 +1,20 @@
 defmodule Euler.Math.Primes do
 
+  import Euler.Math, only: [div?: 2]
+
   defp isPrime(n) do
-    not (
+    sqrt = n |> :math.sqrt |> trunc
+    hasFactor = 
       primes
-      |> Stream.take_while(&(&1 * &1 <= n))
-      |> Enum.any?(&(rem(n, &1) == 0))
-    )
+      |> Stream.take_while(&(&1 <= sqrt))
+      |> Enum.any?(&div?(n, &1))
+    not hasFactor
   end
 
   def primes do
-    odds = Stream.iterate 5, &(&1 + 2)
-    Stream.concat(2..3, odds |> Stream.filter &(isPrime(&1)))
+    import Euler.Math.Primes.List
+    odds = Stream.iterate max + 2, &(&1 + 2)
+    Stream.concat(list, odds |> Stream.filter &isPrime/1)
   end
 
   def take(n) when is_integer(n), do: primes |> Enum.take(n)
