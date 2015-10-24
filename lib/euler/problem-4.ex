@@ -12,51 +12,48 @@ defmodule Euler.Problem4 do
 
   ## Solution
 
-    nm = (100a + 10b + c)(100d + 10e + f) 
-       = 10000ad + 1000(ae + cd) + 100(af + be + cd) + 10(bf + ce) + cf
-       = 
-
   The product will result in a six-digit palindrome `abccda` that can be written as
 
-    nm = 100000a + 10000b + 1000c + 100c + 10b + a
+    mn = 100000a + 10000b + 1000c + 100c + 10b + a
        = 100001a + 10010b + 1100c
        = 11 (9091a + 910b + 100c)
 
-  And so either *n* or *m* must be divisible by 11.
-
   If we assume that the largest palindrome starts with a 9, then we have
 
-    nm = 11 (81819 + 910b + 100c)
+    mn = 11 (81819 + 910b + 100c)
+
+  Also, either *n* or *m* must be divisible by 11. Let's say *n*. Then if
+  *n'* = *n*/11,
+
+    mn' = 81819 + 910b + 100c = f(b, c)
+
+  where
+
+    n' ∈ 10..90
+    m  ∈ 100..999
+    b  ∈ 0..9
+    c  ∈ 0..9
+
+  so we can search over b, c and n' such that
+
+    (81819 + 910b + 100c)/n' ∈ 100..999
 
   """
 
+  import Euler.Math, only: [div?: 2, between?: 3]
 
-  #  defp palindrome?(word) when is_bitstring(word), do: word == String.reverse word
-  #  defp palindrome?(n)    when is_number(n),       do: palindrome? to_string n
-  #
-  #  def index(list, {new, _, _}), do: list |> Enum.find_index fn({existing, _, _}) -> new < existing end
-  #
-  #  def insert(list, a, b), do: insert(list, { a * b, a, b });
-  #  def insert(list, item) do
-  #    i = index list, item
-  #
-  #  def products(min, max) do
-  #    Stream.unfold([{ max * max, max, max }], fn
-  #      []                                         -> nil
-  #      [{prod, a, b}|t] when a == min && b == min -> { prod, t                                     } 
-  #      [{prod, a, b}|t] when a == min             -> { prod, t |>                   insert(a, b-1) } 
-  #      [{prod, a, b}|t] when             b == min -> { prod, t |> insert(a-1, b)                   } 
-  #      [{prod, a, b}|t]                           -> { prod, t |> insert(a-1, b) |> insert(a, b-1) }
-  #    end
-  #  end
-  #
-  #  def solve do
-  #    products(100, 999)
-  #    |> Stream.filter(fn(n) -> palindrome? n end)
-  #    |> Stream.take 1
-  #  end
+  defp f(b, c), do: 81819 + 910 * b + 100 * c
+
   def solve do
-    906609
+    solutions =
+      for b <- 9..0,
+          c <- 9..0,
+          n <- 90..10,
+          f = f(b, c),
+          div?(f, n),
+          between?(f/n, 100, 999),
+          do: f * 11
+    solutions |> List.first
   end
 
 end
