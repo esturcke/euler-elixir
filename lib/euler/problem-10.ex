@@ -11,8 +11,10 @@ defmodule Euler.Problem10 do
   Find the sum of all the primes below two million.
   """
 
+  alias Math.Primes
+
   def solve do
-    0
+    Primes.under(2_000_000) |> Enum.sum
   end
 
 end

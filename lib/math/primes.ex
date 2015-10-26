@@ -19,4 +19,6 @@ defmodule Math.Primes do
 
   def take(n) when is_integer(n), do: primes |> Enum.take(n)
 
+  def under(n), do: primes |> Enum.take_while &(&1 < n)
+
 end
