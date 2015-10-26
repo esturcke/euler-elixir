@@ -13,10 +13,24 @@ defmodule Euler.Problem9 do
   
   There exists exactly one Pythagorean triplet for which *a* + *b* + *c* = 1000.
   Find the product *abc*.
+
+  ## Solution
+
+  This is a brute force solution.
   """
 
+  import Math, only: [sq: 1]
+
+  defp triplet?(a, b, c), do: sq(a) + sq(b) == sq(c)
+
   def solve do
-    0
+    products =
+      for a <- 1..333,
+          b <- a + 1..div(1000 - a, 2),
+          c = 1000 - a - b,
+          triplet?(a, b, c),
+          do: a * b * c
+    products |> List.first
   end
 
 end

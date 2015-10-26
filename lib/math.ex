@@ -8,4 +8,8 @@ defmodule Math do
     quote do: unquote(a) <= unquote(n) and unquote(n) <= unquote(b)
   end
 
+  defmacro sq(n) do
+    quote do: unquote(n) * unquote(n)
+  end
+
 end
