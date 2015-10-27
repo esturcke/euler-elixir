@@ -1,5 +1,5 @@
 defmodule EulerTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   defp md5(n) do
     n |> Integer.to_string |> :erlang.md5 |> Base.encode16 case: :lower
