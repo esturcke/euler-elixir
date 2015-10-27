@@ -7,12 +7,7 @@ defmodule EulerTest do
 
   for line <- File.stream!(Path.join([__DIR__, "solutions.txt"]), [], :line) do
     [n, hash] = line |> String.split(" ") |> Enum.map &String.strip/1
-    test = :"test problem #{n}"
-    ExUnit.Case.__on_definition__(__ENV__, test)
-    def unquote(test)(_) do
-      assert unquote(hash) == Euler.solve(unquote(n)) |> md5
-      :ok
-    end
+    test "problem #{n}", do: assert unquote(hash) == Euler.solve(unquote(n)) |> md5
   end
 
 end
