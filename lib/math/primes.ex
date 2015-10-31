@@ -1,6 +1,7 @@
 defmodule Math.Primes do
 
   import Math, only: [div?: 2]
+  require Math.Primes.Atkin
 
   defp isPrime(n) do
     sqrt = n |> :math.sqrt |> trunc
@@ -19,6 +20,6 @@ defmodule Math.Primes do
 
   def take(n) when is_integer(n), do: primes |> Enum.take(n)
 
-  def under(n), do: primes |> Enum.take_while &(&1 < n)
+  def to(n), do: Math.Primes.Atkin.to(n)
 
 end

@@ -14,7 +14,7 @@ defmodule Euler.Problem10 do
   alias Math.Primes
 
   def solve do
-    Primes.under(2_000_000) |> Enum.sum
+    Primes.to(2_000_000) |> Enum.sum
   end
 
 end
