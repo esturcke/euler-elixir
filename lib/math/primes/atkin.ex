@@ -110,9 +110,9 @@ defmodule Math.Primes.Atkin do
 
   def sum_to(limit) do
     t = start
-    primes = sieve(limit) |> Bitvector.all
-    t = delta t, "list all"             
-    sum = primes|> Enum.sum
+    primes = sieve(limit)
+    t = delta t, "find primes"
+    sum = primes|> Bitvector.sum
     t = delta t, "sum all"
     sum
   end
