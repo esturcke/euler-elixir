@@ -22,4 +22,6 @@ defmodule Math.Primes do
 
   def to(n), do: Math.Primes.Atkin.to(n)
 
+  def sum_to(n), do: Math.Primes.Atkin.sum_to(n)
+
 end
