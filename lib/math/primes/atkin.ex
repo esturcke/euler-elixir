@@ -2,14 +2,21 @@ defmodule Math.Primes.Atkin do
 
   require Bitvector
   import Math, only: [sq: 1]
+  import Timer
   
   defp odds(n), do: 1 |> Stream.iterate(&(&1 + 2)) |> Stream.take_while(&(&1 <= n))
   defp evens(n), do: 2 |> Stream.iterate(&(&1 + 2)) |> Stream.take_while(&(&1 <= n))
   defp sqrt(n), do: n |> :math.sqrt |> trunc
 
-  def to(limit) when limit < 7, do: [2, 3, 5] |> Enum.take_while(&(&1 <= limit))
-  def to(limit) do
+  defp sieve(limit) when limit < 7 do
+    primes = [2, 3, 5] |> Enum.take_while(&(&1 <= limit))
+    Bitvector.init(7) |> Bitvector.set(primes, true)
+  end
+
+  defp sieve(limit) do
     sieve = Bitvector.init(limit + 1)
+
+    t = start
 
     # Put in candidate primes:
     #   integers which have an odd number of
@@ -24,7 +31,9 @@ defmodule Math.Primes.Atkin do
                      n <= limit,
                      rem(n, 60) in [1, 13, 17, 29, 37, 41, 49, 53],
                      do: n
+    t = delta t, "first candidates"
     sieve |> Bitvector.flip(candidates)
+    t = delta t, "first flip"
 
     # Algorithm step 3.2:
     #   for n ≤ limit, n ← 3x²+y² where x ∈ {1,3,...} and y ∈ {2,4,...} // only odd x's
@@ -36,7 +45,9 @@ defmodule Math.Primes.Atkin do
                      n <= limit,
                      rem(n, 60) in [7, 19, 31, 43],
                      do: n
+    t = delta t, "second candidates"
     sieve |> Bitvector.flip(candidates)
+    t = delta t, "second flip"
 
     # // Algorithm step 3.3:
     #   for n ≤ limit, n ← 3x²-y² where x ∈ {2,3,...} and y ∈ {x-1,x-3,...,1} //all even/odd
@@ -48,7 +59,9 @@ defmodule Math.Primes.Atkin do
                      n <= limit,
                      rem(n, 60) in [11, 23, 47, 59],
                      do: n
+    t = delta t, "third candidates"
     sieve |> Bitvector.flip(candidates)
+    t = delta t, "third flip"
 
     candidates = for x <- odds(sqrt((limit/2))),
                      y <- evens(x - 1),
@@ -56,7 +69,9 @@ defmodule Math.Primes.Atkin do
                      n <= limit,
                      rem(n, 60) in [11, 23, 47, 59],
                      do: n
+    t = delta t, "fourth candidates"
     sieve |> Bitvector.flip(candidates)
+    t = delta t, "fouth flip"
 
     # // Eliminate composites by sieving, only for those occurrences on the wheel:
     #   for n² ≤ limit, n ← 60 × w + x where w ∈ {0,1,...}, x ∈ s, n ≥ 7:
@@ -73,20 +88,33 @@ defmodule Math.Primes.Atkin do
                      sq(n) <= limit,
                      Bitvector.get(sieve, n),
                      do: n
+    t = delta t, "fifth candidates"
     reject = for n <- candidates,
                  x <- s,
                  w <- 0..trunc(limit/60/sq(n) - x/60),
                  c = sq(n) * (60 * w + x),
                  c <= limit,
                  do: c
+    t = delta t, "fifth rejects"
     sieve |> Bitvector.set(reject, false)
+    t = delta t, "fifth sets"
 
     # // one sweep to produce a sequential list of primes up to limit:
     #   output 2, 3, 5
     #   for 7 ≤ n ≤ limit, n ← 60 × w + x where w ∈ {0,1,...}, x ∈ s:
     #       if is_prime(n): output n
-    primes = sieve |> Bitvector.all
-    [2, 3, 5 | primes]
+    sieve |> Bitvector.set [2, 3, 5], true
+  end
+
+  def to(limit), do: sieve(limit) |> Bitvector.all
+
+  def sum_to(limit) do
+    t = start
+    primes = sieve(limit) |> Bitvector.all
+    t = delta t, "list all"             
+    sum = primes|> Enum.sum
+    t = delta t, "sum all"
+    sum
   end
 
 end
