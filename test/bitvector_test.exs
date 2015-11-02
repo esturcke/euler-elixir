@@ -40,4 +40,12 @@ defmodule BitvectorTest do
     assert init(16) |> flip([0,1,2,3,4,8,9,12,15]) |> flip([0,8,10,11,12]) == <<30, 142>>
   end
 
+  test "sum" do
+    assert init(1) |> sum == 0
+    assert init(1) |> flip(0) |> sum == 0
+    assert init(2) |> flip(0) |> sum == 0
+    assert init(2) |> flip(1) |> sum == 1
+    assert init(16) |> flip([0, 5, 6, 7, 9]) |> sum == 27
+  end
+
 end
