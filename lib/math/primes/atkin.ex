@@ -25,52 +25,49 @@ defmodule Math.Primes.Atkin do
     #   for n ≤ limit, n ← 4x²+y² where x ∈ {1,2,...} and y ∈ {1,3,...} // all x's odd y's
     #     if n mod 60 ∈ {1,13,17,29,37,41,49,53}:
     #       is_prime(n) ← ¬is_prime(n)   // toggle state
-    candidates = for x <- 1..sqrt((limit - 1)/4),
+    candidates1 = Task.async(fn -> for x <- 1..sqrt((limit - 1)/4),
                      y <- odds(sqrt(limit - 4 * sq(x))),
                      n = 4 * sq(x) + sq(y),
                      n <= limit,
                      rem(n, 60) in [1, 13, 17, 29, 37, 41, 49, 53],
-                     do: n
-    t = delta t, "first candidates"
-    sieve |> Bitvector.flip(candidates)
-    t = delta t, "first flip"
+                     do: n end)
 
     # Algorithm step 3.2:
     #   for n ≤ limit, n ← 3x²+y² where x ∈ {1,3,...} and y ∈ {2,4,...} // only odd x's
     #       if n mod 60 ∈ {7,19,31,43}:                                 // and even y's
     #           is_prime(n) ← ¬is_prime(n)   // toggle state
-    candidates = for x <- odds(sqrt((limit - 4)/3)),
+    candidates2 = Task.async(fn -> for x <- odds(sqrt((limit - 4)/3)),
                      y <- evens(sqrt(limit - 3 * sq(x))),
                      n = 3 * sq(x) + sq(y),
                      n <= limit,
                      rem(n, 60) in [7, 19, 31, 43],
-                     do: n
-    t = delta t, "second candidates"
-    sieve |> Bitvector.flip(candidates)
-    t = delta t, "second flip"
+                     do: n end)
 
     # // Algorithm step 3.3:
     #   for n ≤ limit, n ← 3x²-y² where x ∈ {2,3,...} and y ∈ {x-1,x-3,...,1} //all even/odd
     #       if n mod 60 ∈ {11,23,47,59}:                                   // odd/even combos
     #           is_prime(n) ← ¬is_prime(n)   // toggle state
-    candidates = for x <- evens(sqrt((limit/2))),
+    candidates3 = Task.async(fn -> for x <- evens(sqrt((limit/2))),
                      y <- odds(x - 1),
                      n = 3 * sq(x) - sq(y),
                      n <= limit,
                      rem(n, 60) in [11, 23, 47, 59],
-                     do: n
-    t = delta t, "third candidates"
-    sieve |> Bitvector.flip(candidates)
-    t = delta t, "third flip"
+                     do: n end)
 
-    candidates = for x <- odds(sqrt((limit/2))),
+    candidates4 = Task.async(fn -> for x <- odds(sqrt((limit/2))),
                      y <- evens(x - 1),
                      n = 3 * sq(x) - sq(y),
                      n <= limit,
                      rem(n, 60) in [11, 23, 47, 59],
-                     do: n
-    t = delta t, "fourth candidates"
-    sieve |> Bitvector.flip(candidates)
+                     do: n end)
+    t = delta t, "prep"
+    sieve |> Bitvector.flip(Task.await(candidates1))
+    t = delta t, "first flip"
+    sieve |> Bitvector.flip(Task.await(candidates2))
+    t = delta t, "second flip"
+    sieve |> Bitvector.flip(Task.await(candidates3))
+    t = delta t, "third flip"
+    sieve |> Bitvector.flip(Task.await(candidates4))
     t = delta t, "fouth flip"
 
     # // Eliminate composites by sieving, only for those occurrences on the wheel:
