@@ -16,18 +16,18 @@ defmodule Bitvector do
 
   defp sum_byte(b, i) when is_number(b) do
     use Bitwise
-    (if (b &&& 0x01) > 0, do:     8 * i, else: 0) +
-    (if (b &&& 0x02) > 0, do: 1 + 8 * i, else: 0) +
-    (if (b &&& 0x04) > 0, do: 2 + 8 * i, else: 0) +
-    (if (b &&& 0x08) > 0, do: 3 + 8 * i, else: 0) +
-    (if (b &&& 0x10) > 0, do: 4 + 8 * i, else: 0) +
-    (if (b &&& 0x20) > 0, do: 5 + 8 * i, else: 0) +
-    (if (b &&& 0x40) > 0, do: 6 + 8 * i, else: 0) +
-    (if (b &&& 0x80) > 0, do: 7 + 8 * i, else: 0)
+    (if (b &&& 0x01) > 0, do:     i, else: 0) +
+    (if (b &&& 0x02) > 0, do: 1 + i, else: 0) +
+    (if (b &&& 0x04) > 0, do: 2 + i, else: 0) +
+    (if (b &&& 0x08) > 0, do: 3 + i, else: 0) +
+    (if (b &&& 0x10) > 0, do: 4 + i, else: 0) +
+    (if (b &&& 0x20) > 0, do: 5 + i, else: 0) +
+    (if (b &&& 0x40) > 0, do: 6 + i, else: 0) +
+    (if (b &&& 0x80) > 0, do: 7 + i, else: 0)
   end
 
   defp sum("", _, acc), do: acc
-  defp sum(<<b, rest::binary>>, i, acc), do: sum(rest, i + 1, acc + sum_byte(b, i))
+  defp sum(<<b, rest::binary>>, i, acc), do: sum(rest, i + 1, acc + sum_byte(b, 8 * i))
   def sum(v), do: sum(v, 0, 0)
 
 end

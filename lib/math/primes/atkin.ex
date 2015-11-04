@@ -93,13 +93,6 @@ defmodule Math.Primes.Atkin do
 
   def to(limit), do: sieve(limit) |> Bitvector.all
 
-  def sum_to(limit) do
-    t = start
-    primes = sieve(limit)
-    t = delta t, "find primes"
-    sum = primes|> Bitvector.sum
-    t = delta t, "sum all"
-    sum
-  end
+  def sum_to(limit), do: sieve(limit) |> Bitvector.sum
 
 end
