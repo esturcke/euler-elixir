@@ -2,7 +2,6 @@ defmodule Math.Primes.Atkin do
 
   require Bitvector
   import Math, only: [sq: 1]
-  import Timer
   
   defp odds(n) when is_number(n), do: 1 |> Stream.iterate(&(&1 + 2)) |> Stream.take_while(&(&1 <= n))
   defp odds, do: 1 |> Stream.iterate(&(&1 + 2))
