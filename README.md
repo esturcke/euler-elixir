@@ -19,7 +19,7 @@ The memory and CPU time used to solve a particular problem can be checked by run
 ./profile [n]
 ```
 
-where *[n]* is the problem number. For example:
+where `[n]` is the problem number. For example:
 
 ```
 ./profile 10
