@@ -4,9 +4,24 @@ defmodule Math.Primes.Atkin do
   import Math, only: [sq: 1]
   import Timer
   
-  defp odds(n), do: 1 |> Stream.iterate(&(&1 + 2)) |> Stream.take_while(&(&1 <= n))
+  defp odds(n) when is_number(n), do: 1 |> Stream.iterate(&(&1 + 2)) |> Stream.take_while(&(&1 <= n))
+  defp odds, do: 1 |> Stream.iterate(&(&1 + 2))
+  defp reverse_odds(n), do: n |> Stream.iterate(&(&1 - 2)) |> Stream.take_while(&(&1 > 0))
   defp evens(n), do: 2 |> Stream.iterate(&(&1 + 2)) |> Stream.take_while(&(&1 <= n))
+  defp evens, do: 2 |> Stream.iterate(&(&1 + 2))
+  defp reverse_evens(n), do: n |> Stream.iterate(&(&1 - 2)) |> Stream.take_while(&(&1 > 0))
   defp sqrt(n), do: n |> :math.sqrt |> trunc
+
+  defp candidates(limit, f, xs, ys, rems) do
+    batches = for chunk <- xs |> Stream.chunk 100, 100, [] do
+                Task.async(fn ->
+                  for x <- chunk, n <- ys.(x) |> Stream.map(fn y -> f.(x, y) end) |> Stream.take_while(&(&1 <= limit)),
+                    rem(n, 60) in rems,
+                    do: n
+                end )
+    end
+    Task.async( fn -> batches |> Stream.map(&Task.await/1) |> Stream.concat end)
+  end
 
   defp sieve(limit) when limit < 7 do
     primes = [2, 3, 5] |> Enum.take_while(&(&1 <= limit))
@@ -25,41 +40,24 @@ defmodule Math.Primes.Atkin do
     #   for n ≤ limit, n ← 4x²+y² where x ∈ {1,2,...} and y ∈ {1,3,...} // all x's odd y's
     #     if n mod 60 ∈ {1,13,17,29,37,41,49,53}:
     #       is_prime(n) ← ¬is_prime(n)   // toggle state
-    candidates1 = Task.async(fn -> for x <- 1..sqrt((limit - 1)/4),
-                     y <- odds(sqrt(limit - 4 * sq(x))),
-                     n = 4 * sq(x) + sq(y),
-                     n <= limit,
-                     rem(n, 60) in [1, 13, 17, 29, 37, 41, 49, 53],
-                     do: n end)
+    f = fn x, y -> 4 * sq(x) + sq(y) end
+    candidates1 = candidates(limit, f, 1..sqrt((limit - 1)/4), fn _ -> odds end, [1, 13, 17, 29, 37, 41, 49, 53])
 
     # Algorithm step 3.2:
     #   for n ≤ limit, n ← 3x²+y² where x ∈ {1,3,...} and y ∈ {2,4,...} // only odd x's
     #       if n mod 60 ∈ {7,19,31,43}:                                 // and even y's
     #           is_prime(n) ← ¬is_prime(n)   // toggle state
-    candidates2 = Task.async(fn -> for x <- odds(sqrt((limit - 4)/3)),
-                     y <- evens(sqrt(limit - 3 * sq(x))),
-                     n = 3 * sq(x) + sq(y),
-                     n <= limit,
-                     rem(n, 60) in [7, 19, 31, 43],
-                     do: n end)
+    f = fn x, y -> 3 * sq(x) + sq(y) end
+    candidates2 = candidates(limit, f, odds(sqrt((limit - 4)/3)), fn _ -> evens end, [7, 19, 31, 43])
 
     # // Algorithm step 3.3:
     #   for n ≤ limit, n ← 3x²-y² where x ∈ {2,3,...} and y ∈ {x-1,x-3,...,1} //all even/odd
     #       if n mod 60 ∈ {11,23,47,59}:                                   // odd/even combos
     #           is_prime(n) ← ¬is_prime(n)   // toggle state
-    candidates3 = Task.async(fn -> for x <- evens(sqrt((limit/2))),
-                     y <- odds(x - 1),
-                     n = 3 * sq(x) - sq(y),
-                     n <= limit,
-                     rem(n, 60) in [11, 23, 47, 59],
-                     do: n end)
+    f = fn x, y -> 3 * sq(x) - sq(y) end
+    candidates3 = candidates(limit, f, evens(sqrt((limit/2))), fn x -> reverse_odds(x - 1) end, [11, 23, 47, 59])
+    candidates4 = candidates(limit, f, odds(sqrt((limit/2))), fn x -> reverse_evens(x - 1) end, [11, 23, 47, 59])
 
-    candidates4 = Task.async(fn -> for x <- odds(sqrt((limit/2))),
-                     y <- evens(x - 1),
-                     n = 3 * sq(x) - sq(y),
-                     n <= limit,
-                     rem(n, 60) in [11, 23, 47, 59],
-                     do: n end)
     t = delta t, "prep"
     sieve |> Bitvector.flip(Task.await(candidates1))
     t = delta t, "first flip"

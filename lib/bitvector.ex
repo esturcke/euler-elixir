@@ -1,14 +1,18 @@
 defmodule Bitvector do
 
   def init(n, b \\ false), do: :hipe_bifs.bitarray(n, b)
-  def set(v, [], _), do: v
-  def set(v, [h|t], b), do: v |> set(h, b) |> set(t, b)
-  def set(v, i, b), do: v |> :hipe_bifs.bitarray_update(i, b)
+  def set(v, i, b) when is_number(i), do: v |> :hipe_bifs.bitarray_update(i, b)
+  def set(v, is, b) do
+    for i <- is, do: set(v, i, b)
+    v
+  end
   def get(v, i), do: v |> :hipe_bifs.bitarray_sub(i)
   def all(v, b \\ true), do: for i <- 0..8*byte_size(v) - 1, get(v, i) == b, do: i
-  def flip(v, []), do: v
-  def flip(v, [h|t]), do: v |> flip(h) |> flip(t)
-  def flip(v, i), do: v |> set(i, not get(v, i))
+  def flip(v, i) when is_number(i), do: v |> set(i, not get(v, i))
+  def flip(v, is) do
+    for i <- is, do: flip(v, i)
+    v
+  end
 
   def sum_byte(b, i) when is_number(b) do
     use Bitwise
