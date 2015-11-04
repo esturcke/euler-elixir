@@ -14,7 +14,7 @@ defmodule Bitvector do
     v
   end
 
-  def sum_byte(b, i) when is_number(b) do
+  defp sum_byte(b, i) when is_number(b) do
     use Bitwise
     (if (b &&& 0x01) > 0, do:     8 * i, else: 0) +
     (if (b &&& 0x02) > 0, do: 1 + 8 * i, else: 0) +

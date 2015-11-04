@@ -31,8 +31,6 @@ defmodule Math.Primes.Atkin do
   defp sieve(limit) do
     sieve = Bitvector.init(limit + 1)
 
-    t = start
-
     # Put in candidate primes:
     #   integers which have an odd number of
     #   representations by certain quadratic forms.
@@ -58,15 +56,10 @@ defmodule Math.Primes.Atkin do
     candidates3 = candidates(limit, f, evens(sqrt((limit/2))), fn x -> reverse_odds(x - 1) end, [11, 23, 47, 59])
     candidates4 = candidates(limit, f, odds(sqrt((limit/2))), fn x -> reverse_evens(x - 1) end, [11, 23, 47, 59])
 
-    t = delta t, "prep"
     sieve |> Bitvector.flip(Task.await(candidates1))
-    t = delta t, "first flip"
     sieve |> Bitvector.flip(Task.await(candidates2))
-    t = delta t, "second flip"
     sieve |> Bitvector.flip(Task.await(candidates3))
-    t = delta t, "third flip"
     sieve |> Bitvector.flip(Task.await(candidates4))
-    t = delta t, "fouth flip"
 
     # // Eliminate composites by sieving, only for those occurrences on the wheel:
     #   for n² ≤ limit, n ← 60 × w + x where w ∈ {0,1,...}, x ∈ s, n ≥ 7:
@@ -83,16 +76,13 @@ defmodule Math.Primes.Atkin do
                      sq(n) <= limit,
                      Bitvector.get(sieve, n),
                      do: n
-    t = delta t, "fifth candidates"
     reject = for n <- candidates,
                  x <- s,
                  w <- 0..trunc(limit/60/sq(n) - x/60),
                  c = sq(n) * (60 * w + x),
                  c <= limit,
                  do: c
-    t = delta t, "fifth rejects"
     sieve |> Bitvector.set(reject, false)
-    t = delta t, "fifth sets"
 
     # // one sweep to produce a sequential list of primes up to limit:
     #   output 2, 3, 5
